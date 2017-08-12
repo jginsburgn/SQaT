@@ -1,0 +1,12 @@
+20170808
+--------
+
+Pruebas de software (tipos):
+	Unitaria: sobre una instancia lógica, ya sea grande o chica.
+	Estrés: ¿Qué tantas peticiones puede soportar el sistema hasta dejar de dar servicio?
+	Carga: ¿Qué tantas peticiones puede soportar el sistema sin disminuir calidad de servicio?
+	Cobertura: ¿Qué tanto del código se ejecuta? Hay que ingeniar casos de prueba para que todo el código sufra pruebas. (Covtool)
+	Soak: ¿Que lapso con carga contralada soporta el sistema?
+Tipos de releases:
+	Alpha: Prototipo para pruebas en el equipo de desarrollo.
+	Beta: Prototipo para pruebas por el cliente.
