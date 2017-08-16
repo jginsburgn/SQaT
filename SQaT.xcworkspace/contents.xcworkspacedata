@@ -2,6 +2,12 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:FixtureTests/FixtureTests.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:UnitTests/UnitTests.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:CoverageCircularPrime/CoverageCircularPrime.xcodeproj">
    </FileRef>
    <FileRef
