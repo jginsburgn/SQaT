@@ -10,3 +10,15 @@ Pruebas de software (tipos):
 Tipos de releases:
 	Alpha: Prototipo para pruebas en el equipo de desarrollo.
 	Beta: Prototipo para pruebas por el cliente.
+
+20170827
+--------
+
+Adding Google Test to Xcode Project:
+	1. Get the googletest repo from github.
+	2. Build the source with xcodebuild tool called under the googletest/googletest/xcode directory.
+	3. Add the libgtest.a produced, under the Link Binary With Libraries section of the Build Phases tab of the project settings.
+	4. Add the googletest/googletest/include directory in, an absolute fashion, under the Header Search Paths field under the Build Settings tab of the project settings.
+	5. Add the googletest/googletest/xcode/build/Release path, in an absolute fashion, under the Library Search Paths field under the Build Settings tab of the project settings.
+	6. Make sure to call the RUN_ALL_TESTS(); method in the main function of the program (see the advanced googletest documentation for further information on this step).
+	7. Build and run.

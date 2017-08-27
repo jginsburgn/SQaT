@@ -32,6 +32,7 @@ private:
         while ((currentCharacter = getc(file)) != EOF) {
             retVal += currentCharacter;
         }
+        fclose(file);
         return retVal;
     }
     void clearNetFile(NetFile * netFileToClear) {

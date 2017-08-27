@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:TestEventHandler/TestEventHandler.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:Exams/PortScanner/PortScanner.xcodeproj">
    </FileRef>
    <FileRef
