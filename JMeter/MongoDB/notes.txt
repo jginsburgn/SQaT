@@ -1,0 +1,5 @@
+To prepare the mongodb do:
+
+> mongoimport -d test -c zips <(curl -s https://raw.githubusercontent.com/qmmr/mongodb/master/zips.json)
+
+To add the mongo java driver, first download the 3.5.0 jar from "https://oss.sonatype.org/content/repositories/releases/org/mongodb/mongodb-driver/3.5.0/". Then, add the directory of where the jar is contained (usually ~/Downloads) to the JMeter libraries option on the bottom of the Test Plan pane. Run after that :)

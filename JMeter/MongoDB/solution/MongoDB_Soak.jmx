@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="3.2" jmeter="3.2 r1790748">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Test Plan" enabled="true">
+      <stringProp name="TestPlan.comments"></stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+        <collectionProp name="Arguments.arguments"/>
+      </elementProp>
+      <stringProp name="TestPlan.user_define_classpath">/usr/local/Cellar/jmeter/3.2/libexec/lib</stringProp>
+    </TestPlan>
+    <hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Mongo DB Soak Test" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">1</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">30</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">3</stringProp>
+        <longProp name="ThreadGroup.start_time">1504614003000</longProp>
+        <longProp name="ThreadGroup.end_time">1504614003000</longProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+      </ThreadGroup>
+      <hashTree>
+        <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="Collection obtaining preparation." enabled="true">
+          <stringProp name="scriptLanguage">groovy</stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="cacheKey"></stringProp>
+          <stringProp name="script">import com.mongodb.MongoClient;
+import com.mongodb.client.*;
+import org.bson.Document;
+
+MongoClient client = new MongoClient();
+MongoDatabase database = client.getDatabase(&quot;test&quot;);
+MongoCollection&lt;Document&gt; collection = database.getCollection(&quot;zips&quot;);
+
+vars.putObject(&quot;ZIPS_COLLECTION&quot;, collection);</stringProp>
+        </JSR223PreProcessor>
+        <hashTree/>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="[Do not use DEPRECATED APIS] ¿Cuántas ciudades hay?" enabled="false">
+          <stringProp name="cacheKey"></stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="script">import com.mongodb.*
+
+DBCollection collection = (DBCollection)vars.getObject(&quot;ZIPS_COLLECTION&quot;);
+
+//¿Cuántas ciudades hay?
+Integer i = new Integer(collection.find().size());
+
+//Show result
+StringBuilder resultString = new StringBuilder();
+resultString.append(i.toString());
+SampleResult.setResponseData(resultString.toString());</stringProp>
+          <stringProp name="scriptLanguage">groovy</stringProp>
+        </JSR223Sampler>
+        <hashTree/>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="¿Cuántas ciudades hay?" enabled="true">
+          <stringProp name="cacheKey"></stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="script">import com.mongodb.client.*;
+import com.mongodb.client.model.*;
+import org.bson.Document;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+MongoCollection&lt;Document&gt; collection = (MongoCollection&lt;Document&gt;)vars.getObject(&quot;ZIPS_COLLECTION&quot;);
+
+List&lt;Document&gt; aggregationResult = collection.aggregate(
+	Arrays.asList(
+		Aggregates.count()
+	)
+).into(new ArrayList&lt;&gt;());
+
+//Show result
+StringBuilder resultString = new StringBuilder();
+for (int i = 0; i &lt; aggregationResult.size(); i++) {
+	resultString.append(new String(&quot;Total: &quot; + aggregationResult.get(i).get(&quot;count&quot;) + &quot;\n&quot;));
+}
+SampleResult.setResponseData(resultString.toString());</stringProp>
+          <stringProp name="scriptLanguage">groovy</stringProp>
+        </JSR223Sampler>
+        <hashTree/>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="¿Cuántas ciudades distintas hay?" enabled="true">
+          <stringProp name="cacheKey"></stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="script">import com.mongodb.client.*;
+import com.mongodb.client.model.*;
+import org.bson.Document;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+MongoCollection&lt;Document&gt; collection = (MongoCollection&lt;Document&gt;)vars.getObject(&quot;ZIPS_COLLECTION&quot;);
+
+List&lt;Document&gt; aggregationResult = collection.aggregate(
+	Arrays.asList(
+		Aggregates.group(new Document(&quot;city&quot;, &quot;\$city&quot;).append(&quot;state&quot;, &quot;\$state&quot;)),
+		Aggregates.count()
+	)
+).into(new ArrayList&lt;&gt;());
+
+//Show result
+StringBuilder resultString = new StringBuilder();
+for (int i = 0; i &lt; aggregationResult.size(); i++) {
+	resultString.append(new String(&quot;Total: &quot; + aggregationResult.get(i).get(&quot;count&quot;) + &quot;\n&quot;));
+}
+SampleResult.setResponseData(resultString.toString());</stringProp>
+          <stringProp name="scriptLanguage">groovy</stringProp>
+        </JSR223Sampler>
+        <hashTree/>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="¿Ciudades que inician con N?" enabled="true">
+          <stringProp name="cacheKey"></stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="script">import com.mongodb.client.*;
+import com.mongodb.client.model.*;
+import org.bson.Document;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Pattern;
+
+MongoCollection&lt;Document&gt; collection = (MongoCollection&lt;Document&gt;)vars.getObject(&quot;ZIPS_COLLECTION&quot;);
+
+List&lt;Document&gt; aggregationResult = collection.find(
+	new Document(&quot;city&quot;, Pattern.compile(&quot;^N.*\$&quot;, Pattern.CASE_INSENSITIVE))
+).into(new ArrayList&lt;&gt;());
+
+//Show result
+StringBuilder resultString = new StringBuilder();
+for (int i = 0; i &lt; aggregationResult.size(); i++) {
+	resultString.append(new String(&quot;City: &quot; + aggregationResult.get(i).get(&quot;city&quot;) + &quot;\n&quot;));
+}
+SampleResult.setResponseData(resultString.toString());</stringProp>
+          <stringProp name="scriptLanguage">groovy</stringProp>
+        </JSR223Sampler>
+        <hashTree/>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="¿Cuál es el código postal mayor?" enabled="true">
+          <stringProp name="cacheKey"></stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="script">import com.mongodb.client.*;
+import com.mongodb.client.model.*;
+import org.bson.Document;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+MongoCollection&lt;Document&gt; collection = (MongoCollection&lt;Document&gt;)vars.getObject(&quot;ZIPS_COLLECTION&quot;);
+
+List&lt;Document&gt; aggregationResult = collection.aggregate(
+	Arrays.asList(
+		Aggregates.sort(new Document(&quot;_id&quot;, -1)),
+		Aggregates.limit(1)
+	)
+).into(new ArrayList&lt;&gt;());
+
+//Show result
+StringBuilder resultString = new StringBuilder();
+for (int i = 0; i &lt; aggregationResult.size(); i++) {
+	resultString.append(new String(&quot;CP: &quot; + aggregationResult.get(i).get(&quot;_id&quot;) + &quot;\n&quot;));
+}
+SampleResult.setResponseData(resultString.toString());</stringProp>
+          <stringProp name="scriptLanguage">groovy</stringProp>
+        </JSR223Sampler>
+        <hashTree/>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="¿Cuál es el código postal menor?" enabled="true">
+          <stringProp name="cacheKey"></stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="script">import com.mongodb.client.*;
+import com.mongodb.client.model.*;
+import org.bson.Document;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+MongoCollection&lt;Document&gt; collection = (MongoCollection&lt;Document&gt;)vars.getObject(&quot;ZIPS_COLLECTION&quot;);
+
+List&lt;Document&gt; aggregationResult = collection.aggregate(
+	Arrays.asList(
+		Aggregates.sort(new Document(&quot;_id&quot;, 1)),
+		Aggregates.limit(1)
+	)
+).into(new ArrayList&lt;&gt;());
+
+//Show result
+StringBuilder resultString = new StringBuilder();
+for (int i = 0; i &lt; aggregationResult.size(); i++) {
+	resultString.append(new String(&quot;CP: &quot; + aggregationResult.get(i).get(&quot;_id&quot;) + &quot;\n&quot;));
+}
+SampleResult.setResponseData(resultString.toString());</stringProp>
+          <stringProp name="scriptLanguage">groovy</stringProp>
+        </JSR223Sampler>
+        <hashTree/>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="¿Cuál es la ciudad con más letras?" enabled="true">
+          <stringProp name="cacheKey"></stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="script">import com.mongodb.client.*;
+import com.mongodb.client.model.*;
+import org.bson.Document;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+MongoCollection&lt;Document&gt; collection = (MongoCollection&lt;Document&gt;)vars.getObject(&quot;ZIPS_COLLECTION&quot;);
+
+List&lt;Document&gt; aggregationResult = collection.aggregate(
+	Arrays.asList(
+		Aggregates.project(new Document(&quot;letterCount&quot;, new Document(&quot;\$strLenCP&quot;, &quot;\$city&quot;)).append(&quot;city&quot;, 1)),
+		Aggregates.sort(new Document(&quot;letterCount&quot;, -1)),
+		Aggregates.limit(1)
+	)
+).into(new ArrayList&lt;&gt;());
+
+//Show result
+StringBuilder resultString = new StringBuilder();
+for (int i = 0; i &lt; aggregationResult.size(); i++) {
+	resultString.append(new String(&quot;City: &quot; + aggregationResult.get(i).get(&quot;city&quot;) + &quot;\n&quot;));
+}
+SampleResult.setResponseData(resultString.toString());</stringProp>
+          <stringProp name="scriptLanguage">groovy</stringProp>
+        </JSR223Sampler>
+        <hashTree/>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="¿Cuáles son las ciudades con más de dos palabras?" enabled="true">
+          <stringProp name="cacheKey"></stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="script">import com.mongodb.client.*;
+import com.mongodb.client.model.*;
+import org.bson.Document;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Pattern;
+
+MongoCollection&lt;Document&gt; collection = (MongoCollection&lt;Document&gt;)vars.getObject(&quot;ZIPS_COLLECTION&quot;);
+
+List&lt;Document&gt; aggregationResult = collection.find(
+	new Document(&quot;city&quot;, Pattern.compile(&quot;^\\w+ \\w+ \\w+.*\$&quot;, Pattern.CASE_INSENSITIVE))
+).into(new ArrayList&lt;&gt;());
+
+//Show result
+StringBuilder resultString = new StringBuilder();
+for (int i = 0; i &lt; aggregationResult.size(); i++) {
+	resultString.append(new String(&quot;City: &quot; + aggregationResult.get(i).get(&quot;city&quot;) + &quot;\n&quot;));
+}
+SampleResult.setResponseData(resultString.toString());</stringProp>
+          <stringProp name="scriptLanguage">groovy</stringProp>
+        </JSR223Sampler>
+        <hashTree/>
+        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <threadCounts>true</threadCounts>
+              <idleTime>true</idleTime>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+      </hashTree>
+    </hashTree>
+    <WorkBench guiclass="WorkBenchGui" testclass="WorkBench" testname="WorkBench" enabled="true">
+      <boolProp name="WorkBench.save">true</boolProp>
+    </WorkBench>
+    <hashTree/>
+  </hashTree>
+</jmeterTestPlan>
