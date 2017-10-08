@@ -1,0 +1,7 @@
+•	Entrar a la página de BlazeDemo
+•	Entrar a la liga de registrar
+•	Registrar a todos los usuarios obtenidos en la sesión anterior (nombre, correo)
+•	Verificar que el registro es exitoso (buscar el componente que indica que el registro fue exitoso –explicit wait-)
+•	Hacer Login con las credenciales del usuario ya registrado y verificar que sí se hace login (explicit wait)
+
+Consulted from https://classroom.google.com/u/1/c/NzAxMzUyMzk5MVpa/a/ODUzMjk5MjA1OVpa/details on October 8, 2017.
