@@ -1,0 +1,19 @@
+version: '2'
+
+services:
+ mysql:
+  image: mysql
+  ports:
+   - "3306:3306"
+  environment:
+   MYSQL_ROOT_PASSWORD: root
+   MYSQL_USER: opencart
+   MYSQL_PASSWORD: opencart
+   MYSQL_DATABASE: opencart
+
+ opencart:
+  build: ApachePHP/
+  ports:
+    - "80:80"
+  links:
+    - mysql
